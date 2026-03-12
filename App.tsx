@@ -48,7 +48,8 @@ const mapNetworkErrorMessage = (error: unknown, fallbackMessage: string) => {
     return 'El backend esta tardando en despertar. Espera unos segundos y vuelve a intentarlo.';
   }
   if (error instanceof TypeError) {
-    return 'No se pudo conectar con el backend.';
+    const target = apiUrl('/api/health');
+    return `No se pudo conectar con el backend (${target}). Revisa CORS_ORIGIN y VITE_API_BASE_URL.`;
   }
   if (error instanceof Error && String(error.message || '').trim()) {
     return error.message;

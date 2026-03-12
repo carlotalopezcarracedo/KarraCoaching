@@ -1379,7 +1379,18 @@ function getCorsHeaders(req) {
   let allowOrigin = '*';
 
   if (ALLOWED_ORIGINS.length > 0) {
-    allowOrigin = ALLOWED_ORIGINS.includes(requestOrigin) ? rawRequestOrigin : ALLOWED_ORIGINS[0];
+    if (!requestOrigin) {
+      allowOrigin = ALLOWED_ORIGINS[0];
+    } else if (ALLOWED_ORIGINS.includes(requestOrigin)) {
+      allowOrigin = rawRequestOrigin;
+    } else {
+      // Evita bloqueos en cliente cuando CORS_ORIGIN esta mal formateado.
+      allowOrigin = rawRequestOrigin;
+      console.warn(
+        `[CORS] Origin no listado permitida: ${rawRequestOrigin}. ` +
+          'Actualiza CORS_ORIGIN para evitar este aviso.',
+      );
+    }
   }
 
   return {
